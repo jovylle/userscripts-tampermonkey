@@ -35,7 +35,7 @@
       background:var(--color-canvas-default,#fff); box-shadow:0 2px 8px rgba(0,0,0,.06);
       opacity:0; pointer-events:none; transition:opacity .12s ease, transform .12s ease; transform:translateY(-2px);
     }
-    #user-repositories-list ul li:hover .jow-float { opacity:1; pointer-events:auto; transform:translateY(0); }
+    #user-repositories-list>ul>li:hover .jow-float { opacity:1; pointer-events:auto; transform:translateY(0); }
     .jow-mini{font-size:12px;display:inline-flex;align-items:center;gap:4px;cursor:pointer}
     .jow-status{font-size:12px;padding:2px 4px}
     .jow-topbar{
@@ -57,7 +57,7 @@
 
   function run() {
     maybeAddTopbar();
-    const cards = document.querySelectorAll('#user-repositories-list ul li:not(['+UI_FLAG+'])');
+    const cards = document.querySelectorAll('#user-repositories-list>ul>li:not(['+UI_FLAG+'])');
     cards.forEach((li) => mountCard(li));
     applyHideExcluded();
   }
@@ -135,7 +135,7 @@
         const obj = JSON.parse(json);
         Object.assign(STATE, obj);
         saveState();
-        document.querySelectorAll('#user-repositories-list ul li['+UI_FLAG+']').forEach(li => {
+        document.querySelectorAll('#user-repositories-list>ul>li['+UI_FLAG+']').forEach(li => {
           const a = li.querySelector('a[itemprop="name codeRepository"], a.Link--primary, a[href^="/"][data-hovercard-type="repository"]');
           if (!a) return;
           const repoPath = a.getAttribute('href').replace(/^\/+/, "");
@@ -157,7 +157,7 @@
   }
 
   function applyHideExcluded() {
-    document.querySelectorAll('#user-repositories-list ul li['+UI_FLAG+']').forEach(li => {
+    document.querySelectorAll('#user-repositories-list>ul>li['+UI_FLAG+']').forEach(li => {
       const excluded = li.classList.contains('jow-excluded');
       li.style.display = (hideExcluded && excluded) ? 'none' : '';
     });
