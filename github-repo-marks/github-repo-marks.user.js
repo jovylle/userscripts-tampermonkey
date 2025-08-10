@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name         GitHub Repo Marks (Fav/Active/Excluded) + Export/Import
-// @namespace    https://jow.local
-// @version      1.3.3
-// @description  Mark repos as Active/Excluded (favorites kept internally). Hide Excluded + Export/Import.
+// @name         GitHub Repo Marks (Excluded)
+// @namespace    https://jovylle.com
+// @version      1.3.4
+// @description  Mark repos as Excluded. Hide Excluded.
 // @author       Jow
 // @match        https://github.com/*?tab=repositories*
 // @run-at       document-idle
@@ -21,13 +21,6 @@
 
   GM_addStyle(`
     .jow-excluded { display: none !important; }
-    /* Remove any visual for favorites (state still exists) */
-    .jow-fav::before { content:none !important; }
-    /* ACTIVE gets its own bar (independent of fav) */
-    .jow-active::before {
-      content:""; position:absolute; left:-2px; top:0; bottom:0; width:4px;
-      border-radius:2px; background:#2da44e;
-    }
     .jow-float {
       position:absolute; top:8px; right:8px; z-index:5; display:flex; gap:8px; align-items:center;
       padding:4px 8px; border:1px solid var(--color-border-default,#d0d7de); border-radius:8px;
@@ -43,10 +36,6 @@
     }
     .jow-btn{font-size:12px;padding:4px 8px;border:1px solid var(--color-border-default,#d0d7de);border-radius:6px;background:var(--color-canvas-subtle,#f6f8fa);cursor:pointer}
     .jow-badge{font-size:12px;opacity:.8}
-    /* Hide the Unfavorite control (keep DOM for compatibility) */
-    .jow-unfav,
-    label:has(.jow-unfav),
-    .jow-unfav + label { display:none !important; }
   `);
 
   hookRouting();
@@ -89,13 +78,11 @@
       st.excluded = excludeCheckbox.checked;
       STATE[repoPath] = st;
       saveState();
-      applyStateToCard(li, st);
       applyHideExcluded();
     });
 
     li.appendChild(menu);
   }
-
 
   function maybeAddTopbar () {
     if (document.querySelector('.jow-topbar')) return;
@@ -117,9 +104,7 @@
   }
 
   function applyStateToCard (li, st) {
-    // li.classList.toggle('jow-fav', !!st.fav);
-    // li.classList.toggle('jow-active', st.status === 'active');
-    li.classList.toggle('jow-excluded', st.status === 'excluded');
+    li.classList.toggle('jow-excluded', st.excluded); // Only handle excluded state
   }
 
   function applyHideExcluded () {
@@ -130,8 +115,7 @@
   }
 
   function ensureDefaults (s) {
-    if (!('fav' in s)) s.fav = true;     // keep Favorite state, default ON
-    if (!('status' in s)) s.status = ""; // default None
+    if (!('excluded' in s)) s.excluded = false; // Default to not excluded
     return s;
   }
 
