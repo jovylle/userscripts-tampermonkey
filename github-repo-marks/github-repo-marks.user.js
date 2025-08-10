@@ -4,7 +4,7 @@
 // @version      1.3.5
 // @description  Mark repos as Excluded. Hide Excluded.
 // @author       Jow
-// @match        https://github.com/*?tab=repositories*
+// @match        https://github.com/*tab=repositories*
 // @run-at       document-idle
 // @grant        GM_getValue
 // @grant        GM_setValue
@@ -25,7 +25,7 @@
       opacity: 60%; /* Optional: make it semi-transparent */
     }
     
-    .jow-visible {
+    .jow-show-excluded {
       display: flex !important; /* Or your desired display type */
     }
     .jow-float {
@@ -119,7 +119,7 @@
     document.querySelectorAll('#user-repositories-list>ul>li[' + UI_FLAG + ']').forEach(li => {
       const excluded = li.classList.contains('jow-excluded');
       // li.style.display = (hideExcluded && excluded) ? 'none' : 'flex !important'; // Use display: none; for hiding
-      li.classList.toggle('jow-visible', !hideExcluded || !excluded);
+      li.classList.toggle('jow-show-excluded', !hideExcluded || !excluded);
     });
   }
 
