@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GitHub Repo Marks (Excluded)
 // @namespace    https://jovylle.com
-// @version      1.3.4
+// @version      1.3.5
 // @description  Mark repos as Excluded. Hide Excluded.
 // @author       Jow
 // @match        https://github.com/*?tab=repositories*
@@ -20,7 +20,14 @@
   let hideExcluded = GM_getValue("jow:hideExcluded", false);
 
   GM_addStyle(`
-    .jow-excluded { display: none !important; }
+    .jow-excluded {
+      display: none !important; /* This will ensure it is hidden */
+      opacity: 60%; /* Optional: make it semi-transparent */
+    }
+    
+    .jow-visible {
+      display: flex !important; /* Or your desired display type */
+    }
     .jow-float {
       position:absolute; top:8px; right:8px; z-index:5; display:flex; gap:8px; align-items:center;
       padding:4px 8px; border:1px solid var(--color-border-default,#d0d7de); border-radius:8px;
@@ -78,7 +85,8 @@
       st.excluded = excludeCheckbox.checked;
       STATE[repoPath] = st;
       saveState();
-      applyHideExcluded();
+      applyStateToCard(li, st); // Ensure the class is updated
+      applyHideExcluded(); // Hide excluded immediately after state change
     });
 
     li.appendChild(menu);
@@ -90,7 +98,7 @@
     const top = document.createElement('div');
     top.className = 'jow-topbar';
     top.innerHTML = `
-      <label class="jow-mini"><input type="checkbox" class="jow-show"> Show Excluded</label>
+      <label class="jow-mini"><input type="checkbox" class="jow-show"> Show Excluded 1</label>
     `;
     const showExcluded = top.querySelector('.jow-show');
     showExcluded.checked = false; // Default state is hidden
@@ -110,7 +118,8 @@
   function applyHideExcluded () {
     document.querySelectorAll('#user-repositories-list>ul>li[' + UI_FLAG + ']').forEach(li => {
       const excluded = li.classList.contains('jow-excluded');
-      li.style.display = (hideExcluded && excluded) ? 'none' : ''; // Use display: none; for hiding
+      // li.style.display = (hideExcluded && excluded) ? 'none' : 'flex !important'; // Use display: none; for hiding
+      li.classList.toggle('jow-visible', !hideExcluded || !excluded);
     });
   }
 
