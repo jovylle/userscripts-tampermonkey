@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GitHub Repo Marks (Fav/Active/Excluded) + Export/Import
 // @namespace    https://jow.local
-// @version      1.3.0
+// @version      1.3.1
 // @description  Mark repos as Active/Excluded (favorites kept internally). Hide Excluded + Export/Import.
 // @author       Jow
 // @match        https://github.com/*?tab=repositories*
