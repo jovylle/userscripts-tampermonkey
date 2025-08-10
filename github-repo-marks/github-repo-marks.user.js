@@ -10,8 +10,8 @@
 // @grant        GM_setValue
 // @grant        GM_addStyle
 // @grant        GM_setClipboard
-// @downloadURL  https://raw.githubusercontent.com/jovylle/userscripts-tampermonkey/main/github-repo-marks/github-repo-marks.user.js
-// @updateURL    https://raw.githubusercontent.com/jovylle/userscripts-tampermonkey/main/github-repo-marks/github-repo-marks.user.js
+// @downloadURL  https://raw.githubusercontent.com/jovylle/userscripts-tampermonkey/master/github-repo-marks/github-repo-marks.user.js
+// @updateURL    https://raw.githubusercontent.com/jovylle/userscripts-tampermonkey/master/github-repo-marks/github-repo-marks.user.js
 // ==/UserScript==
 (function () {
   const STORE_KEY = "jow:repoMarks:v1";
