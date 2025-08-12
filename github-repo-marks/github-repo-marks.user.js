@@ -1,33 +1,25 @@
 // ==UserScript==
-// @name         GitHub Repo Marks (Excluded)
+// @name         GitHub Repo Favorites/Focus
 // @namespace    https://jovylle.com
-// @version      1.3.5
-// @description  Mark repos as Excluded. Hide Excluded.
+// @version      1.3.6
+// @description  Mark repos as Excluded. Hide Excluded. Uses localStorage instead of GM_* APIs.
 // @author       Jow
 // @match        https://github.com/*tab=repositories*
 // @run-at       document-idle
-// @grant        GM_getValue
-// @grant        GM_setValue
-// @grant        GM_addStyle
-// @grant        GM_setClipboard
-// @downloadURL  https://raw.githubusercontent.com/jovylle/userscripts-tampermonkey/master/github-repo-marks/github-repo-marks.user.js
-// @updateURL    https://raw.githubusercontent.com/jovylle/userscripts-tampermonkey/master/github-repo-marks/github-repo-marks.user.js
+// @downloadURL  https://raw.githubusercontent.com/jovylle/userscripts-tampermonkey/master/github-repo-marks/github-repo-marks-localstorage.user.js
+// @updateURL    https://raw.githubusercontent.com/jovylle/userscripts-tampermonkey/master/github-repo-marks/github-repo-marks-localstorage.user.js
 // ==/UserScript==
-(function () {
+(() => {
   const STORE_KEY = "jow:repoMarks:v1";
-  const UI_FLAG = "data-jow-mounted";
-  const STATE = loadState();
-  let hideExcluded = GM_getValue("jow:hideExcluded", false);
+  const HIDE_KEY  = "jow:hideExcluded";
+  const UI_FLAG   = "data-jow-mounted";
 
-  GM_addStyle(`
-    .jow-excluded {
-      display: none !important; /* This will ensure it is hidden */
-      opacity: 60%; /* Optional: make it semi-transparent */
-    }
-    
-    .jow-show-excluded {
-      display: flex !important; /* Or your desired display type */
-    }
+  const STATE = loadState();
+  let hideExcluded = getVal(HIDE_KEY, "false") === "true";
+
+  addStyle(`
+    .jow-excluded { display:none !important; opacity:60%; }
+    .jow-show-excluded { display:flex !important; }
     .jow-float {
       position:absolute; top:8px; right:8px; z-index:5; display:flex; gap:8px; align-items:center;
       padding:4px 8px; border:1px solid var(--color-border-default,#d0d7de); border-radius:8px;
@@ -52,8 +44,8 @@
 
   function run () {
     maybeAddTopbar();
-    const cards = document.querySelectorAll('#user-repositories-list>ul>li:not([' + UI_FLAG + '])');
-    cards.forEach((li) => mountCard(li));
+    document.querySelectorAll('#user-repositories-list>ul>li:not([' + UI_FLAG + '])')
+      .forEach(mountCard);
     applyHideExcluded();
   }
 
@@ -79,14 +71,14 @@
       <span class="jow-badge">${repoPath}</span>
     `;
     const excludeCheckbox = menu.querySelector('.jow-exclude');
-    excludeCheckbox.checked = st.excluded || false; // Initialize checked state
+    excludeCheckbox.checked = !!st.excluded;
 
     excludeCheckbox.addEventListener('change', () => {
       st.excluded = excludeCheckbox.checked;
       STATE[repoPath] = st;
       saveState();
-      applyStateToCard(li, st); // Ensure the class is updated
-      applyHideExcluded(); // Hide excluded immediately after state change
+      applyStateToCard(li, st);
+      applyHideExcluded();
     });
 
     li.appendChild(menu);
@@ -95,16 +87,18 @@
   function maybeAddTopbar () {
     if (document.querySelector('.jow-topbar')) return;
     const container = document.querySelector('div#user-repositories-list');
+    if (!container) return;
+
     const top = document.createElement('div');
     top.className = 'jow-topbar';
     top.innerHTML = `
-      <label class="jow-mini"><input type="checkbox" class="jow-show"> Show Excluded 1</label>
+      <label class="jow-mini"><input type="checkbox" class="jow-show"> Show Excluded</label>
     `;
     const showExcluded = top.querySelector('.jow-show');
-    showExcluded.checked = false; // Default state is hidden
+    showExcluded.checked = !hideExcluded;
     showExcluded.addEventListener('change', () => {
-      hideExcluded = !showExcluded.checked; // Toggle hideExcluded based on checkbox
-      GM_setValue("jow:hideExcluded", hideExcluded);
+      hideExcluded = !showExcluded.checked;
+      setVal(HIDE_KEY, String(hideExcluded));
       applyHideExcluded();
     });
 
@@ -112,27 +106,37 @@
   }
 
   function applyStateToCard (li, st) {
-    li.classList.toggle('jow-excluded', st.excluded); // Only handle excluded state
+    li.classList.toggle('jow-excluded', !!st.excluded);
   }
 
   function applyHideExcluded () {
     document.querySelectorAll('#user-repositories-list>ul>li[' + UI_FLAG + ']').forEach(li => {
       const excluded = li.classList.contains('jow-excluded');
-      // li.style.display = (hideExcluded && excluded) ? 'none' : 'flex !important'; // Use display: none; for hiding
       li.classList.toggle('jow-show-excluded', !hideExcluded || !excluded);
     });
   }
 
   function ensureDefaults (s) {
-    if (!('excluded' in s)) s.excluded = false; // Default to not excluded
+    if (!('excluded' in s)) s.excluded = false;
     return s;
   }
 
+  // ---- storage + utils (no GM_*) ----
   function loadState () {
-    try { return JSON.parse(GM_getValue(STORE_KEY, "{}")); } catch { return {}; }
+    try { return JSON.parse(getVal(STORE_KEY, "{}")); } catch { return {}; }
   }
   function saveState () {
-    GM_setValue(STORE_KEY, JSON.stringify(STATE));
+    setVal(STORE_KEY, JSON.stringify(STATE));
+  }
+  function getVal (k, defVal) {
+    const v = localStorage.getItem(k);
+    return v === null ? defVal : v;
+    }
+  function setVal (k, v) { localStorage.setItem(k, v); }
+  function addStyle (css) {
+    const s = document.createElement('style');
+    s.textContent = css;
+    document.documentElement.appendChild(s);
   }
 
   function hookRouting () {
@@ -143,5 +147,4 @@
   }
 
   function debounce (fn, ms) { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); }; }
-  function notify (msg) { console.log('[Repo Marks]', msg); }
 })();
