@@ -18,7 +18,7 @@ Additional features:
 ---
 
 ## 📦 Install
-[Click here to install](https://raw.githubusercontent.com/jovylle/userscripts-tampermonkey/main/github-repo-marks/github-repo-marks.user.js) in Tampermonkey.
+[Click here to install](https://github.com/jovylle/userscripts-tampermonkey/raw/refs/heads/master/github-repo-marks/github-repo-marks.user.js) in Tampermonkey.
 
 ---
 
