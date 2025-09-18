@@ -9,7 +9,7 @@ These scripts enhance web experiences, automate repetitive tasks, and improve wo
 
 | Script | Description | Install |
 | ------ | ----------- | ------- |
-| [GitHub Repo Marks](github-repo-marks) | Mark GitHub repositories as Favorite, Active, or Excluded. Includes Hide, Export, and Import features. | [Install](https://raw.githubusercontent.com/jovylle/userscripts-tampermonkey/main/github-repo-marks/github-repo-marks.user.js) |
+| [GitHub Repo Marks](github-repo-marks) | Mark GitHub repositories as Favorite, Active, or Excluded. Includes Hide, Export, and Import features. | [Install](https://github.com/jovylle/userscripts-tampermonkey/raw/refs/heads/master/github-repo-marks/github-repo-marks.user.js) |
 
 ---
 
