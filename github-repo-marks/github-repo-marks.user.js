@@ -6,8 +6,8 @@
 // @author       Jow
 // @match        https://github.com/*tab=repositories*
 // @run-at       document-idle
-// @downloadURL  https://github.com/jovylle/userscripts-tampermonkey/raw/refs/heads/master/github-repo-marks/github-repo-marks.user.js
-// @updateURL    https://github.com/jovylle/userscripts-tampermonkey/raw/refs/heads/master/github-repo-marks/github-repo-marks.user.js
+// @downloadURL  https://raw.githubusercontent.com/jovylle/userscripts-tampermonkey/main/github-repo-marks/github-repo-marks.user.js
+// @updateURL    https://raw.githubusercontent.com/jovylle/userscripts-tampermonkey/main/github-repo-marks/github-repo-marks.user.js
 // ==/UserScript==
 (() => {
   const STORE_KEY = "jow:repoMarks:v1";
